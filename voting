@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Voting System</title>
+
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial;
+      background: #eef5ee;
+      margin-top: 50px;
+    }
+
+    h1 { color: green; }
+
+    input, button {
+      padding: 10px;
+      margin: 10px;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🗳️ Smart Voting System</h1>
+
+<h3>Register</h3>
+<input type="text" id="name" placeholder="Enter Name"><br>
+<input type="file" id="registerImage"><br>
+<button onclick="register()">Register</button>
+
+<h3>Vote</h3>
+<input type="file" id="voteImage"><br>
+<button onclick="vote()">Vote</button>
+
+<div id="result">Status will appear here...</div>
+
+<script>
+
+// Fake database
+let voters = [];
+
+// Register function
+function register() {
+    let name = document.getElementById("name").value;
+    let file = document.getElementById("registerImage").files[0];
+
+    if (!name || !file) {
+        alert("Enter name and select image");
+        return;
+    }
+
+    let reader = new FileReader();
+
+    reader.onload = function(e) {
+        let imageData = e.target.result;
+
+        voters.push({
+            name: name,
+            image: imageData,
+            voted: false
+        });
+
+        document.getElementById("result").innerText =
+            name + " registered successfully ✅";
+    };
+
+    reader.readAsDataURL(file);
+}
+
+// Vote function
+function vote() {
+    let file = document.getElementById("voteImage").files[0];
+
+    if (!file) {
+        alert("Select image");
+        return;
+    }
+
+    let reader = new FileReader();
+
+    reader.onload = function(e) {
+        let imageData = e.target.result;
+
+        let found = voters.find(v => v.image === imageData);
+
+        if (!found) {
+            document.getElementById("result").innerText =
+                "Face not recognized ❌";
+            return;
+        }
+
+        if (found.voted) {
+            document.getElementById("result").innerText =
+                found.name + " already voted ❌";
+            return;
+        }
+
+        found.voted = true;
+
+        document.getElementById("result").innerText =
+            found.name + " vote recorded ✅";
+    };
+
+    reader.readAsDataURL(file);
+}
+
+</script>
+
+</body>
+</html>
